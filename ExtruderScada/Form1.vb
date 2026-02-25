@@ -120,7 +120,41 @@ Public Class Form1
                 End If
             End Using
         End Using
+
+        ' Recuperar último estado
+        Dim queryEstad1o As String = "SELECT TOP 1 Tubo1, Tubo2, Cover FROM Estado ORDER BY ID DESC"
+        Using conn As New SqlConnection("Server=RMX-D4LZZV2;Database=GaficadoreTest;User Id=Manu;Password=2022.Tgram2;")
+            conn.Open()
+            Using cmdEstado As New SqlCommand(queryEstad1o, conn)
+                Dim readerEstado As SqlDataReader = cmdEstado.ExecuteReader()
+                If readerEstado.Read() Then
+                    Dim idTubo1 As Integer = Convert.ToInt32(readerEstado("Tubo1"))
+                    Dim idTubo2 As Integer = Convert.ToInt32(readerEstado("Tubo2"))
+                    Dim idCover As Integer = Convert.ToInt32(readerEstado("Cover"))
+                    readerEstado.Close()
+
+                    ' Ahora consultar los Batch en Materiales
+                    Texbox1.Text = ObtenerBatch(conn, idTubo1)
+                    Texbox2.Text = ObtenerBatch(conn, idTubo2)
+                    Texbox3.Text = ObtenerBatch(conn, idCover)
+                End If
+            End Using
+        End Using
+
     End Sub
+    Private Function ObtenerBatch(conn As SqlConnection, idMaterial As Integer) As String
+        Dim query As String = "SELECT Batch FROM Materiales WHERE ID = @ID"
+        Using cmd As New SqlCommand(query, conn)
+            cmd.Parameters.AddWithValue("@ID", idMaterial)
+            Dim result As Object = cmd.ExecuteScalar()
+            If result IsNot Nothing Then
+                Return result.ToString()
+            Else
+                Return ""
+            End If
+        End Using
+    End Function
+
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         ' Validar selección
@@ -198,77 +232,68 @@ Public Class Form1
         End Using
     End Sub
 
-    Sub actualizarFamilia()
-        ' Validar selección de material
+    Private Sub actualizarFamilia()
         If ComboBox5.SelectedItem Is Nothing Then
-            MessageBox.Show("Selecciona un material antes de continuar.")
+            MessageBox.Show("Seleccione un material antes de continuar.")
             Exit Sub
         End If
 
-        Dim materialNombre As String = ComboBox5.SelectedItem.ToString()
+        Using conn As New SqlConnection("Server=RMX-D4LZZV2;Database=GaficadoreTest;User Id=Manu;Password=2022.Tgram2;")
+            conn.Open()
 
-        ' Reunir los valores de los MaterialSkinTextBox2
-        Dim batches As New List(Of String)
-        If Not String.IsNullOrWhiteSpace(Texbox1.Text) Then batches.Add(Texbox1.Text)
-        If Not String.IsNullOrWhiteSpace(Texbox2.Text) Then batches.Add(Texbox2.Text)
-        If Not String.IsNullOrWhiteSpace(Texbox3.Text) Then batches.Add(Texbox3.Text)
+            ' Recuperar último Estado
+            Dim queryEstado As String = "SELECT TOP 1 ID, Tubo1, Tubo2, Cover FROM Estado ORDER BY ID DESC"
+            Dim cmdEstado As New SqlCommand(queryEstado, conn)
+            Dim readerEstado As SqlDataReader = cmdEstado.ExecuteReader()
 
-        If batches.Count = 0 Then
-            MessageBox.Show("Ingresa al menos un Batch en los campos de texto.")
-            Exit Sub
-        End If
+            If readerEstado.Read() Then
+                Dim idEstado As Integer = Convert.ToInt32(readerEstado("ID"))
+                Dim idTubo1 As Integer = Convert.ToInt32(readerEstado("Tubo1"))
+                Dim idTubo2 As Integer = Convert.ToInt32(readerEstado("Tubo2"))
+                Dim idCover As Integer = Convert.ToInt32(readerEstado("Cover"))
+                readerEstado.Close()
 
-        ' Variables para guardar los IDs insertados
-        Dim tubo1ID As Integer = -1
-        Dim tubo2ID As Integer = -1
-        Dim coverID As Integer = -1
+                ' Validar cada batch: si cambió, insertar nuevo
+                Dim nuevoTubo1 As Integer = ValidarOInsertar(conn, idTubo1, Texbox1.Text, ComboBox5.SelectedItem.ToString())
+                Dim nuevoTubo2 As Integer = ValidarOInsertar(conn, idTubo2, Texbox2.Text, ComboBox5.SelectedItem.ToString())
+                Dim nuevoCover As Integer = ValidarOInsertar(conn, idCover, Texbox3.Text, ComboBox5.SelectedItem.ToString())
 
-        Try
-            Using connection As New SqlConnection(connectionString)
-                connection.Open()
-
-                ' Insertar registros y recuperar IDs
-                If Not String.IsNullOrWhiteSpace(Texbox1.Text) Then
-                    Using cmdInsert As New SqlCommand("INSERT INTO Materiales (MATERIAL, Batch) OUTPUT INSERTED.ID VALUES (@Material, @Batch)", connection)
-                        cmdInsert.Parameters.AddWithValue("@Material", materialNombre)
-                        cmdInsert.Parameters.AddWithValue("@Batch", Texbox2.Text)
-                        tubo1ID = Convert.ToInt32(cmdInsert.ExecuteScalar())
-                    End Using
-                End If
-
-                If Not String.IsNullOrWhiteSpace(Texbox2.Text) Then
-                    Using cmdInsert As New SqlCommand("INSERT INTO Materiales (MATERIAL, Batch) OUTPUT INSERTED.ID VALUES (@Material, @Batch)", connection)
-                        cmdInsert.Parameters.AddWithValue("@Material", materialNombre)
-                        cmdInsert.Parameters.AddWithValue("@Batch", Texbox2.Text)
-                        tubo2ID = Convert.ToInt32(cmdInsert.ExecuteScalar())
-                    End Using
-                End If
-
-                If Not String.IsNullOrWhiteSpace(Texbox3.Text) Then
-                    Using cmdInsert As New SqlCommand("INSERT INTO Materiales (MATERIAL, Batch) OUTPUT INSERTED.ID VALUES (@Material, @Batch)", connection)
-                        cmdInsert.Parameters.AddWithValue("@Material", materialNombre)
-                        cmdInsert.Parameters.AddWithValue("@Batch", Texbox3.Text)
-                        coverID = Convert.ToInt32(cmdInsert.ExecuteScalar())
-                    End Using
-                End If
-
-                ' Actualizar tabla Estado con los IDs
-                ' Aquí puedes decidir si actualizas el último registro o uno específico
-                Using cmdUpdate As New SqlCommand("UPDATE Estado SET Tubo1=@Tubo1, Tubo2=@Tubo2, Cover=@Cover, Batch=@Batch WHERE ID=(SELECT TOP 1 ID FROM Estado ORDER BY ID DESC)", connection)
-                    cmdUpdate.Parameters.AddWithValue("@Tubo1", If(tubo1ID <> -1, tubo1ID, DBNull.Value))
-                    cmdUpdate.Parameters.AddWithValue("@Tubo2", If(tubo2ID <> -1, tubo2ID, DBNull.Value))
-                    cmdUpdate.Parameters.AddWithValue("@Cover", If(coverID <> -1, coverID, DBNull.Value))
-                    cmdUpdate.Parameters.AddWithValue("@Batch", If(tubo1ID <> -1, tubo1ID, DBNull.Value)) ' Batch = ID de Tubo1
+                ' Actualizar Estado con mezcla de IDs
+                Dim updateEstado As String = "UPDATE Estado SET Tubo1=@T1, Tubo2=@T2, Cover=@C WHERE ID=@ID"
+                Using cmdUpdate As New SqlCommand(updateEstado, conn)
+                    cmdUpdate.Parameters.AddWithValue("@T1", nuevoTubo1)
+                    cmdUpdate.Parameters.AddWithValue("@T2", nuevoTubo2)
+                    cmdUpdate.Parameters.AddWithValue("@C", nuevoCover)
+                    cmdUpdate.Parameters.AddWithValue("@ID", idEstado)
                     cmdUpdate.ExecuteNonQuery()
                 End Using
-            End Using
 
-            MessageBox.Show("Registros insertados en Materiales y Estado actualizado correctamente.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-        Catch ex As Exception
-            MessageBox.Show("Error al insertar registros: " & ex.Message)
-        End Try
+                MessageBox.Show("Familia actualizada correctamente.")
+            End If
+        End Using
     End Sub
+
+    Private Function ValidarOInsertar(conn As SqlConnection, idActual As Integer, nuevoBatch As String, material As String) As Integer
+        ' Obtener batch actual
+        Dim query As String = "SELECT Batch FROM Materiales WHERE ID=@ID"
+        Using cmd As New SqlCommand(query, conn)
+            cmd.Parameters.AddWithValue("@ID", idActual)
+            Dim actualBatch As Object = cmd.ExecuteScalar()
+
+            ' Si el batch es igual, conservar el mismo ID
+            If actualBatch IsNot Nothing AndAlso actualBatch.ToString() = nuevoBatch Then
+                Return idActual
+            End If
+        End Using
+
+        ' Si cambió, insertar nuevo registro
+        Dim insertQuery As String = "INSERT INTO Materiales (Batch, Material) OUTPUT INSERTED.ID VALUES (@Batch, @Material)"
+        Using cmdInsert As New SqlCommand(insertQuery, conn)
+            cmdInsert.Parameters.AddWithValue("@Batch", nuevoBatch)
+            cmdInsert.Parameters.AddWithValue("@Material", material)
+            Return Convert.ToInt32(cmdInsert.ExecuteScalar())
+        End Using
+    End Function
 
     Private Sub Texbox1_Click(sender As Object, e As EventArgs) Handles Texbox1.Click
         Texbox1.Text = ""
