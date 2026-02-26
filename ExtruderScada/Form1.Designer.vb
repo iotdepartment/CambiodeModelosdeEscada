@@ -53,7 +53,7 @@ Partial Class Form1
         Me.Button1.Depth = 0
         Me.Button1.HighEmphasis = True
         Me.Button1.Icon = Nothing
-        Me.Button1.Location = New System.Drawing.Point(371, 700)
+        Me.Button1.Location = New System.Drawing.Point(366, 743)
         Me.Button1.Margin = New System.Windows.Forms.Padding(4, 6, 4, 6)
         Me.Button1.MouseState = MaterialSkin.MouseState.HOVER
         Me.Button1.Name = "Button1"
@@ -79,11 +79,11 @@ Partial Class Form1
         Me.ComboBox1.FormattingEnabled = True
         Me.ComboBox1.IntegralHeight = False
         Me.ComboBox1.ItemHeight = 43
-        Me.ComboBox1.Location = New System.Drawing.Point(31, 258)
+        Me.ComboBox1.Location = New System.Drawing.Point(9, 258)
         Me.ComboBox1.MaxDropDownItems = 4
         Me.ComboBox1.MouseState = MaterialSkin.MouseState.OUT
         Me.ComboBox1.Name = "ComboBox1"
-        Me.ComboBox1.Size = New System.Drawing.Size(433, 49)
+        Me.ComboBox1.Size = New System.Drawing.Size(455, 49)
         Me.ComboBox1.StartIndex = 0
         Me.ComboBox1.TabIndex = 1
         '
@@ -92,7 +92,7 @@ Partial Class Form1
         Me.MaterialLabel1.AutoSize = True
         Me.MaterialLabel1.Depth = 0
         Me.MaterialLabel1.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel1.Location = New System.Drawing.Point(31, 236)
+        Me.MaterialLabel1.Location = New System.Drawing.Point(9, 236)
         Me.MaterialLabel1.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel1.Name = "MaterialLabel1"
         Me.MaterialLabel1.Size = New System.Drawing.Size(108, 19)
@@ -104,7 +104,7 @@ Partial Class Form1
         Me.MaterialLabel2.AutoSize = True
         Me.MaterialLabel2.Depth = 0
         Me.MaterialLabel2.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel2.Location = New System.Drawing.Point(31, 339)
+        Me.MaterialLabel2.Location = New System.Drawing.Point(9, 328)
         Me.MaterialLabel2.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel2.Name = "MaterialLabel2"
         Me.MaterialLabel2.Size = New System.Drawing.Size(58, 19)
@@ -125,7 +125,7 @@ Partial Class Form1
         Me.ComboBox2.FormattingEnabled = True
         Me.ComboBox2.IntegralHeight = False
         Me.ComboBox2.ItemHeight = 43
-        Me.ComboBox2.Location = New System.Drawing.Point(31, 361)
+        Me.ComboBox2.Location = New System.Drawing.Point(9, 350)
         Me.ComboBox2.MaxDropDownItems = 4
         Me.ComboBox2.MouseState = MaterialSkin.MouseState.OUT
         Me.ComboBox2.Name = "ComboBox2"
@@ -138,7 +138,7 @@ Partial Class Form1
         Me.MaterialLabel3.AutoSize = True
         Me.MaterialLabel3.Depth = 0
         Me.MaterialLabel3.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel3.Location = New System.Drawing.Point(270, 340)
+        Me.MaterialLabel3.Location = New System.Drawing.Point(270, 328)
         Me.MaterialLabel3.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel3.Name = "MaterialLabel3"
         Me.MaterialLabel3.Size = New System.Drawing.Size(59, 19)
@@ -159,7 +159,7 @@ Partial Class Form1
         Me.ComboBox3.FormattingEnabled = True
         Me.ComboBox3.IntegralHeight = False
         Me.ComboBox3.ItemHeight = 43
-        Me.ComboBox3.Location = New System.Drawing.Point(270, 362)
+        Me.ComboBox3.Location = New System.Drawing.Point(270, 350)
         Me.ComboBox3.MaxDropDownItems = 4
         Me.ComboBox3.MouseState = MaterialSkin.MouseState.OUT
         Me.ComboBox3.Name = "ComboBox3"
@@ -181,11 +181,11 @@ Partial Class Form1
         Me.ComboBox4.FormattingEnabled = True
         Me.ComboBox4.IntegralHeight = False
         Me.ComboBox4.ItemHeight = 43
-        Me.ComboBox4.Location = New System.Drawing.Point(31, 155)
+        Me.ComboBox4.Location = New System.Drawing.Point(9, 155)
         Me.ComboBox4.MaxDropDownItems = 4
         Me.ComboBox4.MouseState = MaterialSkin.MouseState.OUT
         Me.ComboBox4.Name = "ComboBox4"
-        Me.ComboBox4.Size = New System.Drawing.Size(433, 49)
+        Me.ComboBox4.Size = New System.Drawing.Size(455, 49)
         Me.ComboBox4.StartIndex = 0
         Me.ComboBox4.TabIndex = 1
         '
@@ -194,7 +194,7 @@ Partial Class Form1
         Me.MaterialLabel4.AutoSize = True
         Me.MaterialLabel4.Depth = 0
         Me.MaterialLabel4.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel4.Location = New System.Drawing.Point(31, 133)
+        Me.MaterialLabel4.Location = New System.Drawing.Point(9, 133)
         Me.MaterialLabel4.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel4.Name = "MaterialLabel4"
         Me.MaterialLabel4.Size = New System.Drawing.Size(66, 19)
@@ -224,10 +224,12 @@ Partial Class Form1
         '
         'MaterialLabel5
         '
+        Me.MaterialLabel5.BackColor = System.Drawing.SystemColors.ControlText
         Me.MaterialLabel5.Depth = 0
         Me.MaterialLabel5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.MaterialLabel5.Font = New System.Drawing.Font("Roboto", 48.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel)
         Me.MaterialLabel5.FontType = MaterialSkin.MaterialSkinManager.fontType.H3
+        Me.MaterialLabel5.ForeColor = System.Drawing.Color.Cornsilk
         Me.MaterialLabel5.Location = New System.Drawing.Point(156, 0)
         Me.MaterialLabel5.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel5.Name = "MaterialLabel5"
@@ -253,7 +255,7 @@ Partial Class Form1
         Me.MaterialLabel7.AutoSize = True
         Me.MaterialLabel7.Depth = 0
         Me.MaterialLabel7.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel7.Location = New System.Drawing.Point(31, 424)
+        Me.MaterialLabel7.Location = New System.Drawing.Point(9, 424)
         Me.MaterialLabel7.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel7.Name = "MaterialLabel7"
         Me.MaterialLabel7.Size = New System.Drawing.Size(63, 19)
@@ -275,7 +277,7 @@ Partial Class Form1
         Me.ComboBox5.IntegralHeight = False
         Me.ComboBox5.ItemHeight = 43
         Me.ComboBox5.Items.AddRange(New Object() {"EPDM60", "EPDM70"})
-        Me.ComboBox5.Location = New System.Drawing.Point(31, 446)
+        Me.ComboBox5.Location = New System.Drawing.Point(9, 446)
         Me.ComboBox5.MaxDropDownItems = 4
         Me.ComboBox5.MouseState = MaterialSkin.MouseState.OUT
         Me.ComboBox5.Name = "ComboBox5"
@@ -288,7 +290,7 @@ Partial Class Form1
         Me.MaterialLabel8.AutoSize = True
         Me.MaterialLabel8.Depth = 0
         Me.MaterialLabel8.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel8.Location = New System.Drawing.Point(270, 618)
+        Me.MaterialLabel8.Location = New System.Drawing.Point(270, 622)
         Me.MaterialLabel8.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel8.Name = "MaterialLabel8"
         Me.MaterialLabel8.Size = New System.Drawing.Size(45, 19)
@@ -300,7 +302,7 @@ Partial Class Form1
         Me.MaterialLabel10.AutoSize = True
         Me.MaterialLabel10.Depth = 0
         Me.MaterialLabel10.Font = New System.Drawing.Font("Roboto", 14.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
-        Me.MaterialLabel10.Location = New System.Drawing.Point(270, 518)
+        Me.MaterialLabel10.Location = New System.Drawing.Point(270, 523)
         Me.MaterialLabel10.MouseState = MaterialSkin.MouseState.HOVER
         Me.MaterialLabel10.Name = "MaterialLabel10"
         Me.MaterialLabel10.Size = New System.Drawing.Size(55, 19)
@@ -345,7 +347,7 @@ Partial Class Form1
         Me.Texbox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 16.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
         Me.Texbox2.HideSelection = True
         Me.Texbox2.LeadingIcon = Nothing
-        Me.Texbox2.Location = New System.Drawing.Point(270, 540)
+        Me.Texbox2.Location = New System.Drawing.Point(270, 545)
         Me.Texbox2.MaxLength = 32767
         Me.Texbox2.MouseState = MaterialSkin.MouseState.OUT
         Me.Texbox2.Name = "Texbox2"
@@ -374,7 +376,7 @@ Partial Class Form1
         Me.Texbox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 16.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel)
         Me.Texbox3.HideSelection = True
         Me.Texbox3.LeadingIcon = Nothing
-        Me.Texbox3.Location = New System.Drawing.Point(270, 640)
+        Me.Texbox3.Location = New System.Drawing.Point(270, 644)
         Me.Texbox3.MaxLength = 32767
         Me.Texbox3.MouseState = MaterialSkin.MouseState.OUT
         Me.Texbox3.Name = "Texbox3"

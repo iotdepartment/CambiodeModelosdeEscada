@@ -1,66 +1,84 @@
 import pyodbc
 import time
+from datetime import datetime
 
+# Conexión a SQL Server con tus credenciales
 connection_string = (
-    "DRIVER={SQL Server};"
+    "DRIVER={ODBC Driver 17 for SQL Server};"
     "SERVER=RMX-D4LZZV2;"
     "DATABASE=GaficadoreTest;"
     "UID=Manu;"
     "PWD=2022.Tgram2;"
 )
 
-# Variable global para guardar el valor anterior
-contador_anterior = None
+def mostrar_tabla_estado(cursor):
+    cursor.execute("""
+        SELECT ID, Extruder, Empleado, Mandril, Contador, Tubo1, Tubo2, Cover, Batch
+        FROM Estado
+        ORDER BY ID DESC
+    """)
+    registros = cursor.fetchall()
 
-def guardar_registro():
-    global contador_anterior
-    try:
-        with pyodbc.connect(connection_string) as connection:
-            with connection.cursor() as cursor:
-                # 1. Leer el único registro de Estado
-                cursor.execute("""
-                    SELECT TOP 1 Empleado, Mandril, Extruder, Contador
-                    FROM Estado
-                    ORDER BY ID DESC
-                """)
-                estado = cursor.fetchone()
-                if not estado:
-                    print("No hay registros en Estado.")
-                    return
+    print("\n=== Contenido actual de la tabla Estado ===")
+    for row in registros:
+        print(f"ID={row.ID}, Extruder={row.Extruder}, Empleado={row.Empleado}, "
+              f"Mandril={row.Mandril}, Contador={row.Contador}, "
+              f"Tubo1={row.Tubo1}, Tubo2={row.Tubo2}, Cover={row.Cover}, Batch={row.Batch}")
+    print("==========================================")
 
-                empleado, mandril, extruder, contador_actual = estado
+def obtener_estado_actual(cursor):
+    cursor.execute("""
+        SELECT TOP 1 ID, Extruder, Empleado, Mandril, Contador, Tubo1, Tubo2, Cover, Batch
+        FROM Estado
+        ORDER BY ID DESC
+    """)
+    return cursor.fetchone()
 
-                # 2. Primer ciclo: solo guardar valor
-                if contador_anterior is None:
-                    contador_anterior = contador_actual
-                    print(f"Primer valor leído: {contador_actual}. No se inserta todavía.")
-                    return
+def registrar_piezas(cursor, empleado, mandril, extruder, piezas, tubo1, tubo2, cover):
+    fecha_hora = datetime.now()
 
-                # 3. Calcular diferencia
-                diferencia = contador_actual - contador_anterior
-                piezas = max(diferencia, 0)
+    # Mostrar en consola lo que se va a insertar
+    print("\n--- Insertando en ScadaRegistro ---")
+    print(f"Empleado={empleado}, Mandril={mandril}, Extruder={extruder}")
+    print(f"Piezas={piezas}, FechaHora={fecha_hora}")
+    print(f"Tubo1={tubo1}, Tubo2={tubo2}, Cover={cover}")
+    print("-----------------------------------")
 
-                # 4. Insertar en ScadaRegistro
-                cursor.execute("""
-                    INSERT INTO ScadaRegistro (Empleado, Mandril, Extruder, Piezas, FechaHora)
-                    VALUES (?, ?, ?, ?, GETDATE())
-                """, (empleado, mandril, extruder, piezas))
+    cursor.execute("""
+        INSERT INTO ScadaRegistro (Empleado, Mandril, Extruder, Piezas, FechaHora, Tubo1, Tubo2, Cover)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (empleado, mandril, extruder, piezas, fecha_hora, tubo1, tubo2, cover))
+    cursor.commit()
 
-                connection.commit()
-                print(f"Registradas {piezas} piezas nuevas.")
+def main():
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
 
-                # 5. Actualizar variable
-                contador_anterior = contador_actual
+    contador_anterior = None
 
-    except pyodbc.Error as e:
-        print("Error de base de datos:", e)
-    except Exception as e:
-        print("Error general:", e)
-
-# Bucle principal
-try:
     while True:
-        guardar_registro()
-        time.sleep(25)
-except KeyboardInterrupt:
-    print("Proceso detenido manualmente.")
+        try:
+            # Mostrar todos los registros de Estado
+            mostrar_tabla_estado(cursor)
+
+            # Obtener el último registro
+            estado = obtener_estado_actual(cursor)
+            if estado:
+                (id_estado, extruder, empleado, mandril, contador, tubo1, tubo2, cover, batch) = estado
+
+                if contador_anterior is None:
+                    contador_anterior = contador
+                else:
+                    diferencia = contador - contador_anterior
+                    if diferencia > 0:
+                        registrar_piezas(cursor, empleado, mandril, extruder, diferencia, tubo1, tubo2, cover)
+                        print(f"✔ Registradas {diferencia} piezas en ScadaRegistro.")
+                    contador_anterior = contador
+
+        except Exception as e:
+            print(f"❌ Error: {e}")
+
+        time.sleep(10)
+
+if __name__ == "__main__":
+    main()

@@ -5,7 +5,6 @@ Imports MaterialSkin.Controls
 Public Class Form1
     Public Sub New()
         InitializeComponent()
-
         ' Configurar MaterialSkinManager
         Dim skinManager As MaterialSkinManager = MaterialSkinManager.Instance
         skinManager.AddFormToManage(Me)
@@ -21,12 +20,10 @@ Public Class Form1
             Accent.LightBlue200,   ' Color de acento
             TextShade.BLACK        ' Texto oscuro para fondo claro
         )
-
         ' Botón verde destacado
         Button1.BackColor = Color.Green
         Button1.ForeColor = Color.White
         Button1.UseAccentColor = False   ' Forzar uso del color personalizado
-
     End Sub
 
     Private connectionString As String = "Server=RMX-D4LZZV2;Database=GaficadoreTest;User Id=Manu;Password=2022.Tgram2;"
@@ -36,7 +33,6 @@ Public Class Form1
         Dim queryEmpleados As String = "SELECT Nombre FROM Empleados ORDER BY Nombre ASC"
         Dim queryFamilias As String = "SELECT DISTINCT Familia FROM Mandriles WHERE Familia IS NOT NULL ORDER BY Familia ASC"
         Dim queryExtruders As String = "SELECT Extruder FROM Extruders ORDER BY Extruder ASC"
-
         Using connection As New SqlConnection(connectionString)
             connection.Open()
 
@@ -48,7 +44,6 @@ Public Class Form1
                 End While
                 readerEmp.Close()
             End Using
-
             ' Familias → ComboBox2
             Using cmdFamilias As New SqlCommand(queryFamilias, connection)
                 Dim readerFam As SqlDataReader = cmdFamilias.ExecuteReader()
@@ -57,7 +52,6 @@ Public Class Form1
                 End While
                 readerFam.Close()
             End Using
-
             ' Extruders → ComboBox4
             Using cmdExtruders As New SqlCommand(queryExtruders, connection)
                 Dim readerExt As SqlDataReader = cmdExtruders.ExecuteReader()
@@ -66,7 +60,6 @@ Public Class Form1
                 End While
                 readerExt.Close()
             End Using
-
             ' Ahora leer Estado y seleccionar valores
             Dim queryEstado As String = "SELECT TOP 1 Empleado, Mandril, Extruder FROM Estado ORDER BY ID DESC"
             Using cmdEstado As New SqlCommand(queryEstado, connection)
@@ -120,7 +113,6 @@ Public Class Form1
                 End If
             End Using
         End Using
-
         ' Recuperar último estado
         Dim queryEstad1o As String = "SELECT TOP 1 Tubo1, Tubo2, Cover FROM Estado ORDER BY ID DESC"
         Using conn As New SqlConnection("Server=RMX-D4LZZV2;Database=GaficadoreTest;User Id=Manu;Password=2022.Tgram2;")
@@ -140,7 +132,6 @@ Public Class Form1
                 End If
             End Using
         End Using
-
     End Sub
     Private Function ObtenerBatch(conn As SqlConnection, idMaterial As Integer) As String
         Dim query As String = "SELECT Batch FROM Materiales WHERE ID = @ID"
@@ -154,15 +145,12 @@ Public Class Form1
             End If
         End Using
     End Function
-
-
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         ' Validar selección
         If ComboBox1.SelectedItem Is Nothing OrElse ComboBox3.SelectedItem Is Nothing OrElse ComboBox4.SelectedItem Is Nothing Then
             MessageBox.Show("Selecciona un empleado, mandril y extrusor antes de continuar.")
             Exit Sub
         End If
-
         ' Obtener valores seleccionados
         Dim empleadoNombre As String = ComboBox1.SelectedItem.ToString()
         Dim mandrilNombre As String = ComboBox3.SelectedItem.ToString()
