@@ -2,7 +2,7 @@ import pyodbc
 import time
 from datetime import datetime
 
-# Conexión a SQL Server con tus credenciales
+# Conexión a SQL Server
 connection_string = (
     "DRIVER={ODBC Driver 17 for SQL Server};"
     "SERVER=RMX-D4LZZV2;"
@@ -26,18 +26,23 @@ def mostrar_tabla_estado(cursor):
               f"Tubo1={row.Tubo1}, Tubo2={row.Tubo2}, Cover={row.Cover}, Batch={row.Batch}")
     print("==========================================")
 
-def obtener_estado_actual(cursor):
+def obtener_extrusoras_activas(cursor):
+    """Devuelve la lista de extrusoras que tienen registros en Estado"""
+    cursor.execute("SELECT DISTINCT Extruder FROM Estado")
+    return [row.Extruder for row in cursor.fetchall()]
+
+def obtener_estado_actual(cursor, extruder_id):
     cursor.execute("""
         SELECT TOP 1 ID, Extruder, Empleado, Mandril, Contador, Tubo1, Tubo2, Cover, Batch
         FROM Estado
+        WHERE Extruder = ?
         ORDER BY ID DESC
-    """)
+    """, (extruder_id,))
     return cursor.fetchone()
 
 def registrar_piezas(cursor, empleado, mandril, extruder, piezas, tubo1, tubo2, cover):
     fecha_hora = datetime.now()
 
-    # Mostrar en consola lo que se va a insertar
     print("\n--- Insertando en ScadaRegistro ---")
     print(f"Empleado={empleado}, Mandril={mandril}, Extruder={extruder}")
     print(f"Piezas={piezas}, FechaHora={fecha_hora}")
@@ -54,26 +59,29 @@ def main():
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
 
-    contador_anterior = None
+    # Diccionario dinámico de contadores
+    contadores_anteriores = {}
 
     while True:
         try:
-            # Mostrar todos los registros de Estado
             mostrar_tabla_estado(cursor)
 
-            # Obtener el último registro
-            estado = obtener_estado_actual(cursor)
-            if estado:
-                (id_estado, extruder, empleado, mandril, contador, tubo1, tubo2, cover, batch) = estado
+            # Detectar extrusoras activas en cada ciclo
+            extrusoras_activas = obtener_extrusoras_activas(cursor)
 
-                if contador_anterior is None:
-                    contador_anterior = contador
-                else:
-                    diferencia = contador - contador_anterior
-                    if diferencia > 0:
-                        registrar_piezas(cursor, empleado, mandril, extruder, diferencia, tubo1, tubo2, cover)
-                        print(f"✔ Registradas {diferencia} piezas en ScadaRegistro.")
-                    contador_anterior = contador
+            for extruder_id in extrusoras_activas:
+                estado = obtener_estado_actual(cursor, extruder_id)
+                if estado:
+                    (id_estado, extruder, empleado, mandril, contador, tubo1, tubo2, cover, batch) = estado
+
+                    if extruder_id not in contadores_anteriores:
+                        contadores_anteriores[extruder_id] = contador
+                    else:
+                        diferencia = contador - contadores_anteriores[extruder_id]
+                        if diferencia > 0:
+                            registrar_piezas(cursor, empleado, mandril, extruder, diferencia, tubo1, tubo2, cover)
+                            print(f"✔ Extrusora {extruder_id}: Registradas {diferencia} piezas en ScadaRegistro.")
+                        contadores_anteriores[extruder_id] = contador
 
         except Exception as e:
             print(f"❌ Error: {e}")
